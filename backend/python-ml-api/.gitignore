@@ -1,0 +1,48 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment
+.env
+.venv/
+venv/
+
+# Dependencies
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Models or large files (optional — if models are large or will be downloaded/generated)
+models/
+
+# Logs and debug
+*.log
+logs/
+
+# IDE and editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook checkpoints (if used)
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing & coverage
+.coverage
+coverage/
+htmlcov/
+
+# Build files
+build/
+dist/
+
+# Virtual environments
+env/
+ENV/
