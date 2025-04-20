@@ -6,6 +6,8 @@ This project detects roadside garbage using **MobileNetV2** and sends **notifica
 ---
 
 ## 🛠 Setup Instructions 🚀
+ 
+
 
 ### 1️⃣ Install Dependencies 📦
 Run the following command to install required packages:
