@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 import {
   Search,
   FileImage,
@@ -16,42 +17,38 @@ import AISummary from "../components/NagarPalikaDashboard/AISummary";
 import NotificationCard from "../components/NagarPalikaDashboard/NotificationCard";
 import GarbageMap from "../components/NagarPalikaDashboard/Map";
 import Analytics from "../components/NagarPalikaDashboard/Analytics";
+import StaffManagement from "../components/NagarPalikaDashboard/StaffManagement";
+import Settings from "../components/NagarPalikaDashboard/Settings";
 
 const NagarpalikaGarbageDashboard = () => {
+  const location = useLocation();
   const {
     notifications = [],
     handleUpload,
     handleFileChange,
     updateDetectionStatus,
     deleteDetection,
-    addNotification, // Assuming you have a method to add notifications
   } = useAppContext();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-  const [view, setView] = useState("list"); // 'list', 'map', or 'analytics'
 
-  // Filter notifications based on search term and active tab
+  // Filter notifications
   useEffect(() => {
     const filtered = notifications.filter((notification) => {
-      // Ensure the notification is related to garbage
-      const isGarbageRelated = notification.prediction === "Garbage"; // Adjust this condition based on your data structure
-
+      const isGarbageRelated = notification.prediction === "Garbage";
       const coordinates = `${notification.latitude ?? 0}, ${notification.longitude ?? 0}`;
-      const matchesSearch = coordinates
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        activeTab === "all" || notification.status === activeTab;
+      const matchesSearch = coordinates.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = activeTab === "all" || notification.status === activeTab;
 
-      // Only include notifications that are garbage-related and match the search and status criteria
       return isGarbageRelated && matchesSearch && matchesStatus;
     });
 
     setFilteredNotifications(filtered);
   }, [searchTerm, notifications, activeTab]);
 
-  // Calculate stats for the stats cards
+  // Calculate stats
   const stats = {
     total: notifications.filter((n) => n.prediction === "Garbage").length,
     pending: notifications.filter(
@@ -71,67 +68,27 @@ const NagarpalikaGarbageDashboard = () => {
   };
 
   const handleFileInputChange = (e) => {
-    handleFileChange(e); // Handle file selection
-    handleUpload(); // Trigger upload after file selection
+    handleFileChange(e);
+    handleUpload();
   };
 
-  // Handle status update and ensure re-render
+  // Handle status update
   const handleStatusUpdate = (notificationId, newStatus) => {
     updateDetectionStatus(notificationId, newStatus);
-    // Trigger state update after status change
-    const updatedNotifications = notifications.map((notification) =>
-      notification.id === notificationId
-        ? { ...notification, status: newStatus }
-        : notification
+    setFilteredNotifications(prev =>
+      prev.map(notification =>
+        notification.id === notificationId ? { ...notification, status: newStatus } : notification
+      )
     );
-    setFilteredNotifications(updatedNotifications);
-  };
-
-  // Render the current view (list, map, or analytics)
-  const renderView = () => {
-    switch (view) {
-      case "map":
-        return <GarbageMap detections={filteredNotifications ?? []} />;
-      case "analytics":
-        return <Analytics detections={notifications ?? []} activeTab={activeTab} />;
-      default:
-        return (
-          <div className="space-y-4">
-            {(filteredNotifications ?? []).map((notification) => (
-              <motion.div
-                key={notification.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <NotificationCard
-                  notification={notification}
-                  onStatusUpdate={handleStatusUpdate}
-                  onDelete={deleteDetection}
-                />
-              </motion.div>
-            ))}
-            {filteredNotifications.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                No detections found matching your criteria
-              </div>
-            )}
-          </div>
-        );
-    }
   };
 
   return (
     <div className="flex h-screen bg-emerald-50">
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
+      
       <div className="flex-1 overflow-auto">
-        {/* Header */}
         <Header handleImageUpload={handleImageUpload} />
-
-        {/* Hidden file input for upload */}
+        
         <input
           id="file-input"
           type="file"
@@ -140,7 +97,7 @@ const NagarpalikaGarbageDashboard = () => {
           onChange={handleFileInputChange}
         />
 
-        {/* Stats Cards */}
+        {/* Stats Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
           <StatsCard
             icon={FileImage}
@@ -192,17 +149,15 @@ const NagarpalikaGarbageDashboard = () => {
           />
         </div>
 
-        {/* AI Summary */}
+        {/* AI Summary Section */}
         <div className="p-6 pt-0">
           <AISummary />
         </div>
 
-        {/* Garbage Reports Section */}
+        {/* Main Content Area */}
         <div className="px-6 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
-            <h2 className="text-xl font-bold text-indigo-800">
-              Garbage Reports
-            </h2>
+            <h2 className="text-xl font-bold text-indigo-800">Garbage Reports</h2>
             <div className="flex flex-wrap gap-4">
               {/* Search Input */}
               <div className="relative">
@@ -216,23 +171,6 @@ const NagarpalikaGarbageDashboard = () => {
                 <Search className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
 
-              {/* View Toggle Buttons */}
-              <div className="flex space-x-2">
-                {["list", "map", "analytics"].map((v) => (
-                  <button
-                    key={v}
-                    onClick={() => setView(v)}
-                    className={`px-4 py-2 rounded-lg capitalize ${
-                      view === v
-                        ? "bg-blue-600 text-white"
-                        : "bg-white text-gray-700"
-                    }`}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-
               {/* Filter Buttons */}
               <div className="flex space-x-2">
                 {["all", "pending", "in_progress", "completed"].map((tab) => (
@@ -240,9 +178,7 @@ const NagarpalikaGarbageDashboard = () => {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`px-4 py-2 rounded-lg capitalize ${
-                      activeTab === tab
-                        ? "bg-blue-600 text-white"
-                        : "bg-white text-gray-700"
+                      activeTab === tab ? "bg-blue-600 text-white" : "bg-white text-gray-700"
                     }`}
                   >
                     {tab.replace("_", " ")}
@@ -252,8 +188,36 @@ const NagarpalikaGarbageDashboard = () => {
             </div>
           </div>
 
-          {/* Render the current view */}
-          {renderView()}
+          {/* Nested Routes */}
+          <Routes>
+            <Route path="/" element={
+              <div className="space-y-4">
+                {filteredNotifications.map((notification) => (
+                  <motion.div
+                    key={notification.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <NotificationCard
+                      notification={notification}
+                      onStatusUpdate={handleStatusUpdate}
+                      onDelete={deleteDetection}
+                    />
+                  </motion.div>
+                ))}
+                {filteredNotifications.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No detections found matching your criteria
+                  </div>
+                )}
+              </div>
+            } />
+            <Route path="map" element={<GarbageMap detections={filteredNotifications} />} />
+            <Route path="analytics" element={<Analytics detections={notifications} activeTab={activeTab} />} />
+            <Route path="staff" element={<StaffManagement />} />
+            <Route path="settings" element={<Settings />} />
+          </Routes>
         </div>
       </div>
     </div>

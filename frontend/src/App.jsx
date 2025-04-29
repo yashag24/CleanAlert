@@ -14,16 +14,21 @@ function App() {
       <AuthProvider> 
         <AppProvider> 
           <Routes>
+            {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Redirect '/' to correct dashboard */}
-            <Route path="/" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
-            <Route path="/user-dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
-            <Route path="/nagarpalika" element={<PrivateRoute><NagarpalikaDashboard /></PrivateRoute>} />
+            {/* User Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<UserDashboard />} />
+              <Route path="/user-dashboard" element={<UserDashboard />} />
+              <Route path="/my-complaints" element={<UserComplaints />} />
+            </Route>
 
-            {/* User Complaints */}
-            <Route path="/my-complaints" element={<PrivateRoute><UserComplaints /></PrivateRoute>} />
+            {/* Nagarpalika Admin Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/nagarpalika/*" element={<NagarpalikaDashboard />} />
+            </Route>
           </Routes>
         </AppProvider>
       </AuthProvider>

@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -14,6 +15,11 @@ const detectionController = require('./controllers/detectionController');
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const detectionRoutes = require('./routes/detectionRoutes');
+const staffRoutes = require('./routes/staffRoutes');
+
+// Middlewares
+const auth = require('./middlewares/auth');
+const adminCheck = require('./middlewares/adminCheck');
 
 // Initialize Express
 const app = express();
@@ -23,20 +29,20 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Update with your frontend URL
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
-// Multer storage config to preserve original image format
+// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
     const timestamp = Date.now();
-    const ext = path.extname(file.originalname); // .jpg or .png
+    const ext = path.extname(file.originalname);
     const safeName = file.originalname.replace(/\s+/g, '_').replace(/[^\w.-]/gi, '');
     cb(null, `${timestamp}-${safeName}`);
   }
@@ -47,15 +53,16 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-// Legacy endpoints (for frontend compatibility)
+// Legacy endpoints
 app.post('/api/login', authController.login);
 app.post('/upload', upload.single('image'), detectionController.uploadImage);
 
-// New API routes
-app.use('/api/auth', authRoutes);   // Auth routes
-app.use('/api', detectionRoutes);   // Detection routes
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/staff', auth, adminCheck, staffRoutes);
+app.use('/api/', detectionRoutes);
 
-// Serve uploaded files as static
+// Static files
 app.use('/uploads', express.static('uploads'));
 
 // WebSocket setup
@@ -85,12 +92,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
-
-// Error handler
+// Error handling
+app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal server error' });

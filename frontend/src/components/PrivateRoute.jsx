@@ -1,35 +1,28 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = () => {
   const { currentUser, loading } = useAuth();
-  const location = useLocation(); // Get the current route
-
-  console.log("PrivateRoute Debug:");
-  console.log("Current User:", currentUser);
-  console.log("Current Path:", location.pathname);
+  const location = useLocation();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>;
   }
 
   if (!currentUser) {
-    console.log("❌ No user found! Redirecting to login...");
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If user is trying to access '/', redirect based on role
+  // Redirect based on role for root path
   if (location.pathname === "/") {
-    if (currentUser.role === "admin") {
-      console.log("🔹 Admin detected! Redirecting to Nagarpalika Dashboard...");
-      return <Navigate to="/nagarpalika" />;
-    } else {
-      console.log("✅ Regular user detected! Redirecting to User Dashboard...");
-      return <Navigate to="/user-dashboard" />;
-    }
+    return currentUser.role === "admin" ? 
+      <Navigate to="/nagarpalika" replace /> : 
+      <Navigate to="/user-dashboard" replace />;
   }
 
-  return children; // Allow access to other protected routes
+  return <Outlet />;
 };
 
 export default PrivateRoute;

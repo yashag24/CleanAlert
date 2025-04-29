@@ -8,9 +8,9 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-router.post('/upload', upload.single('image'), detectionController.uploadImage);
-router.get('/detections', detectionController.getDetections);
-router.delete('/detections/:id', detectionController.deleteDetection);
 router.patch('/detections/:id/status', detectionController.updateStatus);
+router.get('/detections', detectionController.getDetections);
+router.post('/upload', upload.single('image'), detectionController.uploadImage);
+router.delete('/detections/:id', detectionController.deleteDetection);
 
 module.exports = router;
