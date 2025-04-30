@@ -1,15 +1,19 @@
 const Staff = require('../models/Staff');
 
 exports.getAllStaff = async (req, res) => {
+  
   try {
-    const staff = await Staff.find().sort({ createdAt: -1 });
-    res.json(staff);
+    const  staff = await Staff.find().sort({ createdAt: -1 });
+    return res.json(staff);
+   
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 };
 
 exports.createStaff = async (req, res) => {
+
+  
   try {
     const { name, email, role, phone, assignedArea } = req.body;
     

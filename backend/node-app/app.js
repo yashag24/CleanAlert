@@ -59,7 +59,7 @@ app.post('/upload', upload.single('image'), detectionController.uploadImage);
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/staff', auth, adminCheck, staffRoutes);
+app.use('/api/staff', staffRoutes);
 app.use('/api/', detectionRoutes);
 
 // Static files

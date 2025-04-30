@@ -14,7 +14,7 @@ const StaffManagement = () => {
 
   const fetchStaff = async () => {
     try {
-      const response = await fetch('/api/staff');
+      const response = await fetch('http://localhost:5000/api/staff');
       const data = await response.json();
       setStaff(data);
     } catch (error) {
@@ -25,7 +25,7 @@ const StaffManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this staff member?')) {
       try {
-        await fetch(`/api/staff/${id}`, { method: 'DELETE' });
+        await fetch(`http://localhost:5000/api/staff/${id}`, { method: 'DELETE' });
         fetchStaff();
       } catch (error) {
         console.error('Error deleting staff:', error);
@@ -121,8 +121,9 @@ const StaffForm = ({ staff, onClose, refresh }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData)
     try {
-      const url = staff ? `/api/staff/${staff._id}` : '/api/staff';
+      const url = staff ? `http://localhost:5000/api/staff/${staff._id}` : 'http://localhost:5000/api/staff';
       const method = staff ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
