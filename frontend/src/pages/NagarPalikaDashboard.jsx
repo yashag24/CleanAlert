@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Users,
   PieChart,
+  Leaf,
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
 import Sidebar from "../components/NagarPalikaDashboard/Sidebar";
@@ -83,7 +84,7 @@ const NagarpalikaGarbageDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-emerald-50">
+    <div className="flex h-screen bg-green-50">
       <Sidebar />
       
       <div className="flex-1 overflow-auto">
@@ -97,57 +98,57 @@ const NagarpalikaGarbageDashboard = () => {
           onChange={handleFileInputChange}
         />
 
-        {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
-          <StatsCard
-            icon={FileImage}
-            title="Total Reports"
-            value={stats.total}
-            borderColor="border-emerald-500"
-            iconColor="text-emerald-600"
-            bgColor="bg-emerald-100"
-          />
-          <StatsCard
-            icon={AlertTriangle}
-            title="Pending"
-            value={stats.pending}
-            borderColor="border-amber-500"
-            iconColor="text-amber-600"
-            bgColor="bg-amber-100"
-          />
-          <StatsCard
-            icon={CheckCircle}
-            title="In Progress"
-            value={stats.inProgress}
-            borderColor="border-blue-500"
-            iconColor="text-blue-600"
-            bgColor="bg-blue-100"
-          />
-          <StatsCard
-            icon={CheckCircle}
-            title="Completed"
-            value={stats.completed}
-            borderColor="border-emerald-500"
-            iconColor="text-emerald-600"
-            bgColor="bg-emerald-100"
-          />
-          <StatsCard
-            icon={Users}
-            title="Staff Active"
-            value={12}
-            borderColor="border-indigo-500"
-            iconColor="text-indigo-600"
-            bgColor="bg-indigo-100"
-          />
-          <StatsCard
-            icon={PieChart}
-            title="AI Accuracy"
-            value="94%"
-            borderColor="border-blue-500"
-            iconColor="text-blue-600"
-            bgColor="bg-blue-100"
-          />
-        </div>
+       {/* Stats Cards Grid */}
+<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
+  <StatsCard
+    icon={FileImage}
+    title="Total Reports"
+    value={stats.total}
+    borderColor="border-purple-600"
+    iconColor="text-purple-600"
+    bgColor="bg-purple-100"
+  />
+  <StatsCard
+    icon={AlertTriangle}
+    title="Pending"
+    value={stats.pending}
+    borderColor="border-red-500"
+    iconColor="text-red-600"
+    bgColor="bg-red-50"
+  />
+  <StatsCard
+    icon={CheckCircle}
+    title="In Progress"
+    value={stats.inProgress}
+    borderColor="border-amber-500"
+    iconColor="text-amber-600"
+    bgColor="bg-amber-50"
+  />
+  <StatsCard
+    icon={CheckCircle}
+    title="Completed"
+    value={stats.completed}
+    borderColor="border-green-600"
+    iconColor="text-green-600"
+    bgColor="bg-green-100"
+  />
+  <StatsCard
+    icon={Users}
+    title="Staff Active"
+    value={12}
+    borderColor="border-blue-600"
+    iconColor="text-blue-600"
+    bgColor="bg-blue-50"
+  />
+  <StatsCard
+    icon={Leaf}
+    title="AI Accuracy"
+    value="94%"
+    borderColor="border-teal-600"
+    iconColor="text-teal-600"
+    bgColor="bg-teal-50"
+  />
+</div>
 
         {/* AI Summary Section */}
         <div className="p-6 pt-0">
@@ -157,18 +158,18 @@ const NagarpalikaGarbageDashboard = () => {
         {/* Main Content Area */}
         <div className="px-6 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
-            <h2 className="text-xl font-bold text-indigo-800">Garbage Reports</h2>
+            <h2 className="text-xl font-bold text-green-900">Garbage Reports</h2>
             <div className="flex flex-wrap gap-4">
               {/* Search Input */}
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search by coordinates..."
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 pr-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Search className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+                <Search className="h-5 w-5 text-green-600 absolute left-3 top-2.5" />
               </div>
 
               {/* Filter Buttons */}
@@ -177,8 +178,10 @@ const NagarpalikaGarbageDashboard = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-lg capitalize ${
-                      activeTab === tab ? "bg-blue-600 text-white" : "bg-white text-gray-700"
+                    className={`px-4 py-2 rounded-lg capitalize transition-colors ${
+                      activeTab === tab 
+                        ? "bg-green-700 text-white shadow-md" 
+                        : "bg-white text-green-800 hover:bg-green-100"
                     }`}
                   >
                     {tab.replace("_", " ")}
@@ -207,8 +210,10 @@ const NagarpalikaGarbageDashboard = () => {
                   </motion.div>
                 ))}
                 {filteredNotifications.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    No detections found matching your criteria
+                  <div className="flex flex-col items-center justify-center py-16 text-green-800">
+                    <Leaf className="h-16 w-16 text-green-400 mb-4" />
+                    <p className="text-lg font-medium">No detections found matching your criteria</p>
+                    <p className="text-green-600 mt-2">Adjust your filters or upload new images</p>
                   </div>
                 )}
               </div>

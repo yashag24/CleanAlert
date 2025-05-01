@@ -1,3 +1,5 @@
+import React from 'react';
+
 const StatsCard = ({
   icon: Icon,
   title,
@@ -8,15 +10,17 @@ const StatsCard = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm p-4 border-l-4 ${borderColor}`}
+      className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-l-green-800 border-t border-r border-b border-gray-200"
     >
-      <div className="flex items-center">
-        <div className={`p-3 rounded-full ${bgColor} ${iconColor}`}>
-          <Icon className="h-6 w-6" />
-        </div>
-        <div className="ml-4">
-          <p className="text-sm text-gray-500">{title}</p>
-          <h3 className="text-xl font-bold">{value}</h3>
+      <div className="p-4">
+        <div className="flex items-center">
+          <div className={`p-3 rounded-full ${bgColor} ${iconColor}`}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="ml-4">
+            <p className="text-sm text-gray-600">{title}</p>
+            <h3 className="text-xl font-bold text-green-900">{value}</h3>
+          </div>
         </div>
       </div>
     </div>

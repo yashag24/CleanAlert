@@ -1,18 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { AppProvider } from './context/AppContext';
-import PrivateRoute from './components/PrivateRoute';
-import UserDashboard from './pages/UserDashboard';
-import NagarpalikaDashboard from './pages/NagarPalikaDashboard';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import UserComplaints from './pages/UserComplaints';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { AppProvider } from "./context/AppContext";
+import PrivateRoute from "./components/PrivateRoute";
+import UserDashboard from "./pages/UserDashboard";
+import NagarpalikaDashboard from "./pages/NagarPalikaDashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import UserComplaints from "./pages/UserComplaints";
+
 
 function App() {
   return (
     <Router>
-      <AuthProvider> 
-        <AppProvider> 
+      <AuthProvider>
+        <AppProvider>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />

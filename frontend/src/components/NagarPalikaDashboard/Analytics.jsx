@@ -19,8 +19,8 @@ const Analytics = ({ detections, activeTab }) => {
   // Check if detections is null, undefined, or empty
   if (!detections || detections.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">Detection Trends</h3>
+      <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-l-green-800 border-t border-r border-b border-gray-200 p-6">
+        <h3 className="text-lg font-bold text-green-900 mb-4">Detection Trends</h3>
         <p className="text-gray-500">No detection data available.</p>
       </div>
     );
@@ -48,7 +48,6 @@ const Analytics = ({ detections, activeTab }) => {
     const result = Object.values(dailyData).sort((a, b) =>
       new Date(a.date) - new Date(b.date)
     );
-    console.log("Processed Data:", result); // Log the processed data
     return result;
   };
 
@@ -72,7 +71,6 @@ const Analytics = ({ detections, activeTab }) => {
     }, {});
 
     const result = Object.values(locationData).sort((a, b) => b.count - a.count);
-    console.log("Location Data:", result); // Log the location data
     return result;
   };
 
@@ -87,129 +85,131 @@ const Analytics = ({ detections, activeTab }) => {
   const statusConfig = {
     all: {
       label: "All Detections",
-      stroke: "#4f46e5", // Indigo
-      fill: "#818cf8", // Lighter Indigo
+      stroke: "#047857", // Green-800
+      fill: "#10b981", // Green-500
     },
     pending: {
       label: "Pending Detections",
-      stroke: "#f59e0b", // Amber
-      fill: "#fde68a", // Lighter Amber
+      stroke: "#b45309", // Amber-700
+      fill: "#fbbf24", // Amber-400
     },
     in_progress: {
       label: "In Progress Detections",
-      stroke: "#3b82f6", // Blue
-      fill: "#93c5fd", // Lighter Blue
+      stroke: "#1e40af", // Blue-800
+      fill: "#3b82f6", // Blue-500
     },
     completed: {
       label: "Completed Detections",
-      stroke: "#10b981", // Emerald
-      fill: "#6ee7b7", // Lighter Emerald
+      stroke: "#065f46", // Emerald-800
+      fill: "#10b981", // Emerald-500
     },
   };
 
   const { label, stroke, fill } = statusConfig[activeTab];
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">{label} Trends</h3>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-l-green-800 border-t border-r border-b border-gray-200">
+      <div className="p-6">
+        <h3 className="text-lg font-bold text-green-900 mb-2">{label} Trends</h3>
 
-      {/* Subtitle with Insights */}
-      <p className="text-sm text-gray-600 mb-6">
-        {chartData.length > 0
-          ? `Average detections per day: ${averageDetections.toFixed(2)}`
-          : "No data to display."}
-      </p>
+        {/* Subtitle with Insights */}
+        <p className="text-sm text-gray-600 mb-6">
+          {chartData.length > 0
+            ? `Average detections per day: ${averageDetections.toFixed(2)}`
+            : "No data to display."}
+        </p>
 
-      {/* Chart */}
-      <div className="h-[300px] mb-8">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={chartData}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis
-              dataKey="date"
-              tickFormatter={(date) => format(parseISO(date), 'MMM d')}
-              tick={{ fill: '#666', fontSize: 12 }}
-              axisLine={{ stroke: '#ccc' }}
-            />
-            <YAxis
-              tick={{ fill: '#666', fontSize: 12 }}
-              axisLine={{ stroke: '#ccc' }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-              }}
-              labelFormatter={(date) => format(parseISO(date), 'MMMM d, yyyy')}
-              formatter={(value) => [`Detections: ${value}`, 'Count']}
-            />
-            <Area
-              type="monotone"
-              dataKey="count"
-              stroke={stroke}
-              fill={fill}
-              fillOpacity={0.3}
-              strokeWidth={2}
-            />
-            {/* Average Line */}
-            <ReferenceLine
-              y={averageDetections}
-              stroke="#666"
-              strokeDasharray="3 3"
+        {/* Chart */}
+        <div className="h-[300px] mb-8 p-4 bg-white rounded-lg border border-gray-200">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={chartData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
             >
-              <Label
-                value={`Avg: ${averageDetections.toFixed(2)}`}
-                position="insideTopRight"
-                fill="#666"
-                fontSize={12}
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(date) => format(parseISO(date), 'MMM d')}
+                tick={{ fill: '#666', fontSize: 12 }}
+                axisLine={{ stroke: '#ccc' }}
               />
-            </ReferenceLine>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+              <YAxis
+                tick={{ fill: '#666', fontSize: 12 }}
+                axisLine={{ stroke: '#ccc' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }}
+                labelFormatter={(date) => format(parseISO(date), 'MMMM d, yyyy')}
+                formatter={(value) => [`Detections: ${value}`, 'Count']}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                stroke={stroke}
+                fill={fill}
+                fillOpacity={0.3}
+                strokeWidth={2}
+              />
+              {/* Average Line */}
+              <ReferenceLine
+                y={averageDetections}
+                stroke="#666"
+                strokeDasharray="3 3"
+              >
+                <Label
+                  value={`Avg: ${averageDetections.toFixed(2)}`}
+                  position="insideTopRight"
+                  fill="#666"
+                  fontSize={12}
+                />
+              </ReferenceLine>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
 
-      {/* Location Breakdown */}
-      <h3 className="text-lg font-semibold mb-4">Location Breakdown</h3>
-      <div className="h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={locationData}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis
-              dataKey="location"
-              tick={{ fill: '#666', fontSize: 12 }}
-              axisLine={{ stroke: '#ccc' }}
-            />
-            <YAxis
-              tick={{ fill: '#666', fontSize: 12 }}
-              axisLine={{ stroke: '#ccc' }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-              }}
-              formatter={(value) => [`Detections: ${value}`, 'Count']}
-            />
-            <Bar
-              dataKey="count"
-              fill={fill}
-              fillOpacity={0.6}
-            />
-            <Legend
-              formatter={() => `Detections by Location`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {/* Location Breakdown */}
+        <h3 className="text-lg font-bold text-green-900 mb-4">Location Breakdown</h3>
+        <div className="h-[300px] p-4 bg-white rounded-lg border border-gray-200">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={locationData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis
+                dataKey="location"
+                tick={{ fill: '#666', fontSize: 12 }}
+                axisLine={{ stroke: '#ccc' }}
+              />
+              <YAxis
+                tick={{ fill: '#666', fontSize: 12 }}
+                axisLine={{ stroke: '#ccc' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#fff',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                }}
+                formatter={(value) => [`Detections: ${value}`, 'Count']}
+              />
+              <Bar
+                dataKey="count"
+                fill={fill}
+                fillOpacity={0.8}
+              />
+              <Legend
+                formatter={() => `Detections by Location`}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
