@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { X, User, Mail, Phone, UserCheck } from 'lucide-react';
 
 const StaffForm = ({ staff, onClose, refresh }) => {
   const [formData, setFormData] = useState({
@@ -30,74 +31,109 @@ const StaffForm = ({ staff, onClose, refresh }) => {
     }
   };
 
+  // Role options specific to waste management
+  const roleOptions = [
+    { value: 'collector', label: 'Garbage Collector' },
+    { value: 'supervisor', label: 'Area Supervisor' },
+    { value: 'inspector', label: 'Cleanliness Inspector' },
+    { value: 'driver', label: 'Vehicle Driver' }
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">{staff ? 'Edit Staff' : 'Add New Staff'}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            ✕
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl border-l-4 border-green-500">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-green-800 flex items-center">
+            <UserCheck className="mr-2 text-green-600" size={20} />
+            {staff ? 'Edit Staff Member' : 'Add Waste Management Staff'}
+          </h3>
+          <button 
+            onClick={onClose} 
+            className="text-gray-500 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
+          >
+            <X size={20} />
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <div className="relative">
+              <div className="absolute left-3 top-3 text-green-600">
+                <User size={18} />
+              </div>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="pl-10 pr-3 py-2 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-green-500 focus:ring-green-500"
+                placeholder="Enter staff name"
+                required
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <div className="relative">
+              <div className="absolute left-3 top-3 text-green-600">
+                <Mail size={18} />
+              </div>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="pl-10 pr-3 py-2 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-green-500 focus:ring-green-500"
+                placeholder="email@example.com"
+                required
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="pl-3 pr-3 py-2 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-green-500 focus:ring-green-500"
             >
-              <option value="collector">Collector</option>
-              <option value="supervisor">Supervisor</option>
+              {roleOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <div className="relative">
+              <div className="absolute left-3 top-3 text-green-600">
+                <Phone size={18} />
+              </div>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="pl-10 pr-3 py-2 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-green-500 focus:ring-green-500"
+                placeholder="+91 1234567890"
+              />
+            </div>
           </div>
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end space-x-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
             >
-              {staff ? 'Update' : 'Create'} Staff
+              {staff ? 'Update' : 'Add'} Staff Member
             </button>
           </div>
         </form>
