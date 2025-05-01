@@ -22,11 +22,14 @@ const staffSchema = new mongoose.Schema({
     type: String,
     match: [/^[0-9]{10}$/, 'Invalid phone number format']
   },
-  assignedArea: String,
+  currentAssignments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Detection'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('Staff', staffSchema);
+module.exports = mongoose.model('Staff', staffSchema);//1

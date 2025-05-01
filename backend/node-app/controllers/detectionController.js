@@ -1,16 +1,17 @@
 const Detection = require('../models/Detection');
+const Staff = require('../models/Staff'); // Added missing import
 const { predictImage } = require('../services/pythonAPI');
 const { sendEmail } = require('../services/emailService');
 const fs = require('fs').promises;
 const { getLocationName } = require('../utils/geocoder');
 const mongoose = require('mongoose');
 
-
 exports.uploadImage = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
     console.log(`latitude: ${latitude}, longitude: ${longitude}`);
 
+    // Coordinate validation
     if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
       return res.status(400).json({ error: 'Invalid latitude or longitude' });
     }
@@ -20,7 +21,6 @@ exports.uploadImage = async (req, res) => {
     }
 
     const imageBuffer = await fs.readFile(req.file.path);
-
     const prediction = await predictImage(imageBuffer);
 
     const location_name = await getLocationName(latitude, longitude).catch((error) => {
@@ -30,6 +30,7 @@ exports.uploadImage = async (req, res) => {
 
     const image_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
+    // Create new detection document
     const detection = new Detection({
       prediction: prediction.class_name,
       confidence: prediction.confidence,
@@ -44,6 +45,7 @@ exports.uploadImage = async (req, res) => {
 
     await detection.save();
 
+    // Maintain original response structure
     const responseData = {
       _id: detection._id,
       prediction: detection.prediction,
@@ -60,16 +62,7 @@ exports.uploadImage = async (req, res) => {
     if (prediction.class_name === 'Garbage') {
       sendEmail(
         '🗑️ Garbage Detection Alert 🚨',
-        `📍 *Location:* ${location_name}
-    🌍 Coordinates: (${latitude}, ${longitude})
-    📸 Image URL: http://localhost:5000${responseData.image_url}
-    
-    ✅ *Prediction:* Garbage
-    📊 *Confidence:* ${(prediction.confidence * 100).toFixed(2)}%
-    
-    🕒 *Detected At:* ${new Date().toLocaleString()}
-    
-    Please schedule a cleanup as soon as possible to maintain hygiene and cleanliness in the area. 🧹✨`
+        `📍 *Location:* ${location_name}\n🌍 Coordinates: (${latitude}, ${longitude})\n📸 Image URL: http://localhost:5000${responseData.image_url}\n✅ *Prediction:* Garbage\n📊 *Confidence:* ${(prediction.confidence * 100).toFixed(2)}%\n🕒 *Detected At:* ${new Date().toLocaleString()}\nPlease schedule a cleanup as soon as possible to maintain hygiene and cleanliness in the area. 🧹✨`
       );
       req.app.get('socketio').emit('new_detection', responseData);
     }
@@ -85,10 +78,12 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
-// Get all detections
+// Get all detections (with staff population)
 exports.getDetections = async (req, res) => {
   try {
-    const detections = await Detection.find().sort({ timestamp: -1 });
+    const detections = await Detection.find()
+      .populate('staffAssigned', 'name role')
+      .sort({ timestamp: -1 });
     res.json(detections);
   } catch (error) {
     res.status(500).json({
@@ -98,7 +93,7 @@ exports.getDetections = async (req, res) => {
   }
 };
 
-// Delete a detection
+// Delete detection (original implementation)
 exports.deleteDetection = async (req, res) => {
   try {
     const detection = await Detection.findByIdAndDelete(req.params.id);
@@ -112,33 +107,28 @@ exports.deleteDetection = async (req, res) => {
   }
 };
 
-// Update detection status
+// Update status (with staff population)
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-
-    console.log(`🟡 Received ID: '${id}'`);
-    console.log(`🟡 Requested status: '${status}'`);
 
     const validStatuses = ['pending', 'in_progress', 'completed'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    // Validate and convert ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid detection ID format' });
     }
 
     const updated = await Detection.findByIdAndUpdate(
-      new mongoose.Types.ObjectId(id),
+      id,
       { status },
       { new: true }
-    );
+    ).populate('staffAssigned', 'name role');
 
     if (!updated) {
-      console.error('❌ Detection not found for ID:', id);
       return res.status(404).json({ error: 'Detection not found' });
     }
 
@@ -149,19 +139,62 @@ exports.updateStatus = async (req, res) => {
       latitude: updated.latitude,
       longitude: updated.longitude,
       location_name: updated.location_name,
-      image_url: updated.image_url || updated.imageUrl, // in case you're using snake_case or camelCase
+      image_url: updated.image_url,
       timestamp: updated.timestamp,
       status: updated.status,
       source: updated.source,
+      staffAssigned: updated.staffAssigned
     };
 
-    // WebSocket notification
-    const io = req.app.get('socketio');
-    io.emit('status_update', updatedDetection);
+    req.app.get('socketio').emit('status_update', updatedDetection);
+    res.status(200).json(updatedDetection);
 
-    return res.status(200).json(updatedDetection);
   } catch (error) {
-    console.error('❌ Failed to update status:', error);
-    return res.status(500).json({ error: 'Failed to update status' });
+    console.error('Status Update Error:', error);
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+};
+
+// Staff assignment (fixed version)
+exports.assignDetection = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { staffId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid detection ID' });
+    }
+
+    const staff = await Staff.findById(staffId);
+    if (!staff) return res.status(404).json({ error: 'Staff not found' });
+
+    const prevDetection = await Detection.findById(id);
+    if (prevDetection.staffAssigned) {
+      await Staff.findByIdAndUpdate(prevDetection.staffAssigned, {
+        $pull: { currentAssignments: id }
+      });
+    }
+
+    const detection = await Detection.findByIdAndUpdate(
+      id,
+      { 
+        status: 'in_progress',
+        staffAssigned: staffId 
+      },
+      { new: true }
+    ).populate('staffAssigned', 'name role');
+
+    await Staff.findByIdAndUpdate(staffId, {
+      $addToSet: { currentAssignments: id }
+    });
+
+    req.app.get('socketio').emit('status_update', detection);
+    res.json(detection);
+  } catch (error) {
+    console.error('Assignment Error:', error);
+    res.status(500).json({ 
+      error: 'Assignment failed',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
