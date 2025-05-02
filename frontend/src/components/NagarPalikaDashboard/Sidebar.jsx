@@ -189,13 +189,13 @@ const Sidebar = () => {
       <div className="p-4 border-t border-green-800/30">
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center text-red-100 hover:bg-red-700/20 py-2 px-3 rounded-lg transition-all duration-300 ${
+          className={`w-full flex items-center text-red-300 hover:bg-red-700/20 py-2 px-3 rounded-lg transition-all duration-300 ${
             isCollapsed ? 'justify-center' : ''
           }`}
         >
           <LogOut className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
           {!isCollapsed && (
-            <span className="text-sm font-medium ml-2 transition-opacity duration-200 delay-75">
+            <span className="text-sm text-red-250 font-medium ml-2 transition-opacity duration-200 delay-75">
               Logout
             </span>
           )}
