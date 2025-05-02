@@ -40,7 +40,7 @@ const MainCard = () => {
       </div>
 
       {/* Upload Section */}
-      <section className="p-6">
+      <section className="p-6 ">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

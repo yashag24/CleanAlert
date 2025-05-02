@@ -21,9 +21,7 @@ function App() {
 
             {/* User Routes */}
             <Route element={<PrivateRoute />}>
-              <Route path="/" element={<UserDashboard />} />
-              <Route path="/user-dashboard" element={<UserDashboard />} />
-              <Route path="/my-complaints" element={<UserComplaints />} />
+              <Route path="/user-dashboard/*" element={<UserDashboard />} />
             </Route>
 
             {/* Nagarpalika Admin Routes */}

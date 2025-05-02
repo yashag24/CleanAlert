@@ -30,7 +30,7 @@ const NagarpalikaGarbageDashboard = () => {
     updateDetectionStatus,
     deleteDetection,
   } = useAppContext();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotifications, setFilteredNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
@@ -39,9 +39,14 @@ const NagarpalikaGarbageDashboard = () => {
   useEffect(() => {
     const filtered = notifications.filter((notification) => {
       const isGarbageRelated = notification.prediction === "Garbage";
-      const coordinates = `${notification.latitude ?? 0}, ${notification.longitude ?? 0}`;
-      const matchesSearch = coordinates.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = activeTab === "all" || notification.status === activeTab;
+      const coordinates = `${notification.latitude ?? 0}, ${
+        notification.longitude ?? 0
+      }`;
+      const matchesSearch = coordinates
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        activeTab === "all" || notification.status === activeTab;
 
       return isGarbageRelated && matchesSearch && matchesStatus;
     });
@@ -76,9 +81,11 @@ const NagarpalikaGarbageDashboard = () => {
   // Handle status update
   const handleStatusUpdate = (notificationId, newStatus) => {
     updateDetectionStatus(notificationId, newStatus);
-    setFilteredNotifications(prev =>
-      prev.map(notification =>
-        notification.id === notificationId ? { ...notification, status: newStatus } : notification
+    setFilteredNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === notificationId
+          ? { ...notification, status: newStatus }
+          : notification
       )
     );
   };
@@ -86,69 +93,62 @@ const NagarpalikaGarbageDashboard = () => {
   return (
     <div className="flex h-screen bg-green-50">
       <Sidebar />
-      
+
       <div className="flex-1 overflow-auto">
         <Header handleImageUpload={handleImageUpload} />
-        
-        <input
-          id="file-input"
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileInputChange}
-        />
 
-       {/* Stats Cards Grid */}
-<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
-  <StatsCard
-    icon={FileImage}
-    title="Total Reports"
-    value={stats.total}
-    borderColor="border-purple-600"
-    iconColor="text-purple-600"
-    bgColor="bg-purple-100"
-  />
-  <StatsCard
-    icon={AlertTriangle}
-    title="Pending"
-    value={stats.pending}
-    borderColor="border-red-500"
-    iconColor="text-red-600"
-    bgColor="bg-red-50"
-  />
-  <StatsCard
-    icon={CheckCircle}
-    title="In Progress"
-    value={stats.inProgress}
-    borderColor="border-amber-500"
-    iconColor="text-amber-600"
-    bgColor="bg-amber-50"
-  />
-  <StatsCard
-    icon={CheckCircle}
-    title="Completed"
-    value={stats.completed}
-    borderColor="border-green-600"
-    iconColor="text-green-600"
-    bgColor="bg-green-100"
-  />
-  <StatsCard
-    icon={Users}
-    title="Staff Active"
-    value={12}
-    borderColor="border-blue-600"
-    iconColor="text-blue-600"
-    bgColor="bg-blue-50"
-  />
-  <StatsCard
-    icon={Leaf}
-    title="AI Accuracy"
-    value="94%"
-    borderColor="border-teal-600"
-    iconColor="text-teal-600"
-    bgColor="bg-teal-50"
-  />
-</div>
+       
+        {/* Stats Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
+          <StatsCard
+            icon={FileImage}
+            title="Total Reports"
+            value={stats.total}
+            borderColor="border-purple-600"
+            iconColor="text-purple-600"
+            bgColor="bg-purple-100"
+          />
+          <StatsCard
+            icon={AlertTriangle}
+            title="Pending"
+            value={stats.pending}
+            borderColor="border-red-500"
+            iconColor="text-red-600"
+            bgColor="bg-red-50"
+          />
+          <StatsCard
+            icon={CheckCircle}
+            title="In Progress"
+            value={stats.inProgress}
+            borderColor="border-amber-500"
+            iconColor="text-amber-600"
+            bgColor="bg-amber-50"
+          />
+          <StatsCard
+            icon={CheckCircle}
+            title="Completed"
+            value={stats.completed}
+            borderColor="border-green-600"
+            iconColor="text-green-600"
+            bgColor="bg-green-100"
+          />
+          <StatsCard
+            icon={Users}
+            title="Staff Active"
+            value={12}
+            borderColor="border-blue-600"
+            iconColor="text-blue-600"
+            bgColor="bg-blue-50"
+          />
+          <StatsCard
+            icon={Leaf}
+            title="AI Accuracy"
+            value="94%"
+            borderColor="border-teal-600"
+            iconColor="text-teal-600"
+            bgColor="bg-teal-50"
+          />
+        </div>
 
         {/* AI Summary Section */}
         <div className="p-6 pt-0">
@@ -158,7 +158,9 @@ const NagarpalikaGarbageDashboard = () => {
         {/* Main Content Area */}
         <div className="px-6 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
-            <h2 className="text-xl font-bold text-green-900">Garbage Reports</h2>
+            <h2 className="text-xl font-bold text-green-900">
+              Garbage Reports
+            </h2>
             <div className="flex flex-wrap gap-4">
               {/* Search Input */}
               <div className="relative">
@@ -179,8 +181,8 @@ const NagarpalikaGarbageDashboard = () => {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`px-4 py-2 rounded-lg capitalize transition-colors ${
-                      activeTab === tab 
-                        ? "bg-green-700 text-white shadow-md" 
+                      activeTab === tab
+                        ? "bg-green-700 text-white shadow-md"
                         : "bg-white text-green-800 hover:bg-green-100"
                     }`}
                   >
@@ -193,33 +195,48 @@ const NagarpalikaGarbageDashboard = () => {
 
           {/* Nested Routes */}
           <Routes>
-            <Route path="/" element={
-              <div className="space-y-4">
-                {filteredNotifications.map((notification) => (
-                  <motion.div
-                    key={notification.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <NotificationCard
-                      notification={notification}
-                      onStatusUpdate={handleStatusUpdate}
-                      onDelete={deleteDetection}
-                    />
-                  </motion.div>
-                ))}
-                {filteredNotifications.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-16 text-green-800">
-                    <Leaf className="h-16 w-16 text-green-400 mb-4" />
-                    <p className="text-lg font-medium">No detections found matching your criteria</p>
-                    <p className="text-green-600 mt-2">Adjust your filters or upload new images</p>
-                  </div>
-                )}
-              </div>
-            } />
-            <Route path="map" element={<GarbageMap detections={filteredNotifications} />} />
-            <Route path="analytics" element={<Analytics detections={notifications} activeTab={activeTab} />} />
+            <Route
+              path="/"
+              element={
+                <div className="space-y-4">
+                  {filteredNotifications.map((notification) => (
+                    <motion.div
+                      key={notification.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <NotificationCard
+                        notification={notification}
+                        onStatusUpdate={handleStatusUpdate}
+                        onDelete={deleteDetection}
+                      />
+                    </motion.div>
+                  ))}
+                  {filteredNotifications.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-16 text-green-800">
+                      <Leaf className="h-16 w-16 text-green-400 mb-4" />
+                      <p className="text-lg font-medium">
+                        No detections found matching your criteria
+                      </p>
+                      <p className="text-green-600 mt-2">
+                        Adjust your filters or upload new images
+                      </p>
+                    </div>
+                  )}
+                </div>
+              }
+            />
+            <Route
+              path="map"
+              element={<GarbageMap detections={filteredNotifications} />}
+            />
+            <Route
+              path="analytics"
+              element={
+                <Analytics detections={notifications} activeTab={activeTab} />
+              }
+            />
             <Route path="staff" element={<StaffManagement />} />
             <Route path="settings" element={<Settings />} />
           </Routes>

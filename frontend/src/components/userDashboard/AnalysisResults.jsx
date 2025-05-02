@@ -9,7 +9,7 @@ const AnalysisResults = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2 text-blue-500"
+            className="h-5 w-5 mr-2 text-green-800"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -24,7 +24,7 @@ const AnalysisResults = () => {
 
         <div className="space-y-6">
           {/* Prediction Card */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-5 shadow-inner">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-5 shadow-inner">
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-700 font-medium">Classification</span>
               <span
@@ -62,11 +62,11 @@ const AnalysisResults = () => {
 
           {/* Location Card */}
           {(result.latitude && result.longitude) || result.location_name ? (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-5 shadow-inner">
+            <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-5 shadow-inner">
               <h4 className="text-gray-700 font-medium mb-4 flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-2 text-blue-500"
+                  className="h-4 w-4 mr-2 text-green-800"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
