@@ -7,31 +7,29 @@ import NagarpalikaDashboard from "./pages/NagarPalikaDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserComplaints from "./pages/UserComplaints";
-
+import DashboardRedirect from "./pages/DashboardRedirect"
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AppProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <AppProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-            {/* User Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/user-dashboard/*" element={<UserDashboard />} />
-            </Route>
-
-            {/* Nagarpalika Admin Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/nagarpalika/*" element={<NagarpalikaDashboard />} />
-            </Route>
-          </Routes>
-        </AppProvider>
-      </AuthProvider>
-    </Router>
+          {/* Private Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<DashboardRedirect />} />
+            <Route path="/user-dashboard/*" element={<UserDashboard />} />
+            <Route path="/nagarpalika/*" element={<NagarpalikaDashboard />} />
+            <Route path="/user-complaints" element={<UserComplaints />} />
+          </Route>
+        </Routes>
+      </AppProvider>
+    </AuthProvider>
+  </Router>
   );
 }
 

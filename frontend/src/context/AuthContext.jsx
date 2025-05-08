@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       console.log("Redirecting to dashboard...");
-      navigate("/dashboard"); // 🔥 Redirect user after successful login
+      navigate("/"); // 🔥 Redirect user after successful login
 
       return { success: true, message: "Login successful" };
     } catch (error) {
