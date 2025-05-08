@@ -1,12 +1,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation ,useNavigate} from 'react-router-dom';
 import { Leaf } from 'lucide-react';
+import { useAuth } from "../../context/AuthContext";
 
 const Sidebar = () => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(true);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
   
+    const handleLogout = () => {
+      logout();
+      navigate("/login"); // Redirect to login page
+    };
   const navItems = [
     { 
       name: 'Dashboard', 
@@ -106,6 +113,7 @@ const Sidebar = () => {
         {/* Footer Section */}
         <div className="p-4 border-t border-green-800/30">
           <button
+          onClick={handleLogout}
             className={`w-full flex items-center text-red-300 hover:bg-red-700/20 py-2 ${isCollapsed ? 'justify-center px-2' : 'px-3'} rounded-lg transition-all duration-300`}
           >
             <svg

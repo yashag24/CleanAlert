@@ -7,8 +7,7 @@ import NagarpalikaDashboard from "./pages/NagarPalikaDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserComplaints from "./pages/UserComplaints";
-import DashboardRedirect from "./pages/DashboardRedirect"
-
+import Outlet from "./components/PrivateRoute";
 function App() {
   return (
     <Router>
@@ -21,10 +20,10 @@ function App() {
 
           {/* Private Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="/" element={<DashboardRedirect />} />
+            <Route path="/" element={<Outlet />} />
             <Route path="/user-dashboard/*" element={<UserDashboard />} />
             <Route path="/nagarpalika/*" element={<NagarpalikaDashboard />} />
-            <Route path="/user-complaints" element={<UserComplaints />} />
+            {/* <Route path="/user-complaints" element={<UserComplaints />} /> */}
           </Route>
         </Routes>
       </AppProvider>
