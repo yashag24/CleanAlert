@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import navigation
 
 const AuthContext = createContext();
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
   // Register Function
   const register = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
+      const response = await fetch(`${baseUrl}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   // Login Function
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch(`${baseUrl}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

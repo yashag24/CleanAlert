@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 const STORAGE_KEY = "garbage_detections";
 
 export const useNotifications = (user) => {
@@ -9,7 +9,7 @@ export const useNotifications = (user) => {
 
   // Initialize WebSocket connection
   useEffect(() => {
-    const newSocket = io("http://localhost:5000"); // Connect to the backend
+    const newSocket = io(`${baseUrl}`); // Connect to the backend
     setSocket(newSocket);
 
     // Cleanup on unmount
@@ -22,7 +22,7 @@ export const useNotifications = (user) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/detections");
+        const response = await fetch(`${baseUrl}/api/detections`);
         const data = await response.json();
         setNotifications(Array.isArray(data) ? data : []); // Ensure data is an array
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -43,7 +43,7 @@ export const useNotifications = (user) => {
   // Handle deletion of detections
   const deleteDetection = async (detectionId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/detections/${detectionId}`, {
+      const response = await fetch(`${baseUrl}/api/detections/${detectionId}`, {
         method: "DELETE",
       });
 

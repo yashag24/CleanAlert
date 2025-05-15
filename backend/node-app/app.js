@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -21,15 +20,24 @@ const staffRoutes = require('./routes/staffRoutes');
 const auth = require('./middlewares/auth');
 const adminCheck = require('./middlewares/adminCheck');
 
+// Services
+const { autoFetchAndProcess } = require('./services/gridfsService'); // Adjust path if needed
+
 // Initialize Express
 const app = express();
 
 // Connect to MongoDB
 connectDB();
 
+// Start GridFS processing when MongoDB is ready
+mongoose.connection.once('open', () => {
+  console.log('MongoDB connected, starting GridFS auto-fetch process...');
+  autoFetchAndProcess();
+});
+
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -50,29 +58,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-// Legacy endpoints
+// Routes
 app.post('/api/login', authController.login);
 app.post('/upload', upload.single('image'), detectionController.uploadImage);
 
-// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/', detectionRoutes);
 
-// Static files
+// Serve static uploads
 app.use('/uploads', express.static('uploads'));
 
-// WebSocket setup
-const server = app.listen(process.env.PORT || 5000, () => {
-  console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
+// Start server
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
+// WebSocket setup
 const io = socketio(server, {
   cors: {
-    origin: '*',
+    origin: process.env.FRONTEND_URL || '*',
     methods: ['GET', 'POST']
   }
 });
@@ -92,7 +101,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// Error handling
+// Fallback + Error Handler
 app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
 app.use((err, req, res, next) => {
   console.error(err.stack);

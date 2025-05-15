@@ -6,6 +6,7 @@ export const useFileUpload = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
   // Clean up preview URL
   useEffect(() => {
@@ -61,7 +62,7 @@ export const useFileUpload = () => {
       formData.append("latitude", locationData.latitude);
       formData.append("longitude", locationData.longitude);
 
-      const response = await fetch("http://localhost:5000/upload", {
+      const response = await fetch(`${baseUrl}/upload`, {
         method: "POST",
         body: formData,
       });

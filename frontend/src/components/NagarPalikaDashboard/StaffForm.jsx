@@ -12,7 +12,10 @@ const StaffForm = ({ staff, onClose, refresh }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = staff ? `http://localhost:5000/api/staff/${staff._id}` : 'http://localhost:5000/api/staff';
+      const baseUrl = import.meta.env.VITE_BACKEND_URL;
+      const url = staff
+        ? `${baseUrl}/api/staff/${staff._id}`
+        : `${baseUrl}/api/staff`;
       const method = staff ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -22,7 +25,7 @@ const StaffForm = ({ staff, onClose, refresh }) => {
       });
 
       if (!response.ok) throw new Error('Failed to save staff');
-      
+
       refresh();
       onClose();
     } catch (error) {
@@ -31,7 +34,6 @@ const StaffForm = ({ staff, onClose, refresh }) => {
     }
   };
 
-  // Role options specific to waste management
   const roleOptions = [
     { value: 'collector', label: 'Garbage Collector' },
     { value: 'supervisor', label: 'Area Supervisor' },
@@ -47,14 +49,14 @@ const StaffForm = ({ staff, onClose, refresh }) => {
             <UserCheck className="mr-2 text-green-600" size={20} />
             {staff ? 'Edit Staff Member' : 'Add Waste Management Staff'}
           </h3>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-gray-500 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
           >
             <X size={20} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

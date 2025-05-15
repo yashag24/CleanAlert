@@ -4,6 +4,7 @@ import { Pencil, Trash2, Users, RefreshCw } from 'lucide-react';
 import StaffForm from './StaffForm';
 
 const StaffManagement = () => {
+  const baseUrl = import.meta.env.VITE_BACKEND_URL;
   const { currentUser } = useAuth();
   const [staff, setStaff] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -17,7 +18,7 @@ const StaffManagement = () => {
   const fetchStaff = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/staff');
+      const response = await fetch(`${baseUrl}/api/staff`);
       const data = await response.json();
       setStaff(data);
     } catch (error) {
@@ -30,7 +31,7 @@ const StaffManagement = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this staff member?')) {
       try {
-        await fetch(`http://localhost:5000/api/staff/${id}`, { method: 'DELETE' });
+        await fetch(`${baseUrl}/api/staff/${id}`, { method: 'DELETE' });
         fetchStaff();
       } catch (error) {
         console.error('Error deleting staff:', error);

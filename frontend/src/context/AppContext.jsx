@@ -6,6 +6,7 @@ import { useAuth } from "./AuthContext";
 import useLocation from "../hooks/useLocation";
 
 const AppContext = createContext();
+const baseUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const AppProvider = ({ children }) => {
   const { toast } = useToast();
@@ -75,7 +76,7 @@ export const AppProvider = ({ children }) => {
       console.log("📤 Sending status update:", detectionId, newStatus);
 
       const response = await fetch(
-        `http://localhost:5000/api/detections/${detectionId}/status`, // Add /status
+        `${baseUrl}/api/detections/${detectionId}/status`, // Add /status
         {
           method: "PATCH",
           headers: {

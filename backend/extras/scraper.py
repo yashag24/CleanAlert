@@ -171,4 +171,4 @@ def download_images(query, num_images=500, use_google=True):
     print("🎉 Download complete!")
 
 # Run the scraper
-download_images("clean indian roads", num_images=10, use_google=True)
+download_images("random objects on furniture", num_images=100, use_google=True)

@@ -1,17 +1,19 @@
 const Detection = require('../models/Detection');
-const Staff = require('../models/Staff'); // Added missing import
+const Staff = require('../models/Staff');
 const { predictImage } = require('../services/pythonAPI');
 const { sendEmail } = require('../services/emailService');
 const fs = require('fs').promises;
 const { getLocationName } = require('../utils/geocoder');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 
 exports.uploadImage = async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
     console.log(`latitude: ${latitude}, longitude: ${longitude}`);
 
-    // Coordinate validation
     if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
       return res.status(400).json({ error: 'Invalid latitude or longitude' });
     }
@@ -28,9 +30,8 @@ exports.uploadImage = async (req, res) => {
       return 'Unknown Location';
     });
 
-    const image_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    const image_url = `${BASE_URL}/uploads/${req.file.filename}`;
 
-    // Create new detection document
     const detection = new Detection({
       prediction: prediction.class_name,
       confidence: prediction.confidence,
@@ -45,7 +46,6 @@ exports.uploadImage = async (req, res) => {
 
     await detection.save();
 
-    // Maintain original response structure
     const responseData = {
       _id: detection._id,
       prediction: detection.prediction,
@@ -62,11 +62,11 @@ exports.uploadImage = async (req, res) => {
     if (prediction.class_name === 'Garbage') {
       sendEmail(
         '🗑️ Garbage Detection Alert 🚨',
-        `📍 *Location:* ${location_name}\n🌍 Coordinates: (${latitude}, ${longitude})\n📸 Image URL: http://localhost:5000${responseData.image_url}\n✅ *Prediction:* Garbage\n📊 *Confidence:* ${(prediction.confidence * 100).toFixed(2)}%\n🕒 *Detected At:* ${new Date().toLocaleString()}\nPlease schedule a cleanup as soon as possible to maintain hygiene and cleanliness in the area. 🧹✨`
+        `📍 *Location:* ${location_name}\n🌍 Coordinates: (${latitude}, ${longitude})\n📸 Image URL: ${responseData.image_url}\n✅ *Prediction:* Garbage\n📊 *Confidence:* ${(prediction.confidence * 100).toFixed(2)}%\n🕒 *Detected At:* ${new Date().toLocaleString()}\nPlease schedule a cleanup as soon as possible to maintain hygiene and cleanliness in the area. 🧹✨`
       );
       req.app.get('socketio').emit('new_detection', responseData);
     }
-    
+
     res.status(201).json(responseData);
 
   } catch (error) {
@@ -78,7 +78,6 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
-// Get all detections (with staff population)
 exports.getDetections = async (req, res) => {
   try {
     const detections = await Detection.find()
@@ -93,7 +92,6 @@ exports.getDetections = async (req, res) => {
   }
 };
 
-// Delete detection (original implementation)
 exports.deleteDetection = async (req, res) => {
   try {
     const detection = await Detection.findByIdAndDelete(req.params.id);
@@ -107,7 +105,6 @@ exports.deleteDetection = async (req, res) => {
   }
 };
 
-// Update status (with staff population)
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -155,7 +152,6 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
-// Staff assignment (fixed version)
 exports.assignDetection = async (req, res) => {
   try {
     const { id } = req.params;
