@@ -7,7 +7,7 @@ import Footer from "../components/userDashboard/Footer";
 import { Routes ,Route} from "react-router-dom";
 import UserMap from "../components/userDashboard/UserMap";
 import UserSettings from "../components/userDashboard/UserSettings";
-import UserReports from "../components/userDashboard/userReports";
+import UserReports from "../components/userDashboard/UserReports";
 const UserDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-green-50 via-green-100 to-green-200">
