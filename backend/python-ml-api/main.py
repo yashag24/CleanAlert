@@ -42,3 +42,7 @@ async def predict(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(500, detail=str(e))
+
+@app.get("/")
+def read_root():
+    return {"message": "Python ML API is up and running!"}
