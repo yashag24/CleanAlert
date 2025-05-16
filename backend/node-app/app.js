@@ -62,7 +62,7 @@ const upload = multer({
 });
 
 // Routes
-app.post('/api/login', authController.login);
+
 app.post('/upload', upload.single('image'), detectionController.uploadImage);
 
 app.use('/api/auth', authRoutes);
