@@ -14,8 +14,6 @@ venv/
 .eggs/
 pip-wheel-metadata/
 
-# Models or large files (optional — if models are large or will be downloaded/generated)
-models/
 
 # Logs and debug
 *.log
